@@ -45,7 +45,16 @@ void moveDown(Maze *maze);
 void moveRight(Maze *maze);
 void moveLeft(Maze *maze);
 void printMap(Maze *maze);
-void endGame();
+int endGame();
+void print_maze(Maze *maze, coord *player);
+void move(Maze *maze, coord *player, char direction);
+int has_won(Maze *maze, coord *player);
+int get_width(FILE *file);
+int get_height(FILE *file);
+int read_maze(Maze *this, FILE *file);
+int create_maze(Maze *this, int height, int width);
+void free_maze(Maze *this);
+
 
 int main(int argc, char *argv[])
 {
@@ -65,8 +74,13 @@ int main(int argc, char *argv[])
     }
 
     // Get the width of the maze file
-    int width = get_width(file);
+    int width = 0;
+    width = get_width(file);
     printf("Width of the maze file: %d\n", width);
+
+    int height = 0;
+    height = get_height(file);
+    printf("Height of the maze file: %d\n", height);
 }
 
 /**
@@ -210,7 +224,7 @@ void moveLeft(Maze *maze)
 //     // and replace the current position with X
 // }
 
-void endGame()
+int endGame()
 {
     printf("You won!\n");
     return EXIT_SUCCESS;
@@ -303,17 +317,15 @@ void free_maze(Maze *this)
  */
 int get_width(FILE *file)
 {
-    int width;
-    if (fscanf(file, "%d", &width) != 1)
+    int width = 0;
+    char ch;
+    // Read the first line of the file
+    while ((ch = fgetc(file)) != '\n' && ch != EOF)
     {
-        printf("Error: Invalid width");
-        return 0;
+        width++;
     }
-    if (width < MIN_DIM || width > MAX_DIM)
-    {
-        printf("Error: Invalid width");
-        return 0;
-    }
+    // Reset the file pointer to the beginning of the file
+    fseek(file, 0, SEEK_SET);
     return width;
 }
 
@@ -325,17 +337,19 @@ int get_width(FILE *file)
  */
 int get_height(FILE *file)
 {
-    int height;
-    if (fscanf(file, "%d", &height) != 1)
+    int height = 0;
+    char ch;
+    // Count the number of lines in the file
+    while ((ch = fgetc(file)) != EOF)
     {
-        printf("Error: Invalid height");
-        return 0;
+        if (ch == '\n')
+        {
+            height++;
+        }
     }
-    if (height < MIN_DIM || height > MAX_DIM)
-    {
-        printf("Error: Invalid height");
-        return 0;
-    }
+    height++;
+    // Reset the file pointer to the beginning of the file
+    fseek(file, 0, SEEK_SET);
     return height;
 }
 
