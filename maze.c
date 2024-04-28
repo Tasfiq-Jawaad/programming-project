@@ -44,7 +44,7 @@ void moveRight(Maze *maze);
 void moveLeft(Maze *maze);
 void printMap(Maze *maze);
 int endGame();
-void print_maze(Maze *maze, coord *player);
+void print_maze(Maze *maze);
 void move(Maze *maze, coord *player, char direction);
 int has_won(Maze *maze, coord *player);
 int get_width(FILE *file);
@@ -74,6 +74,24 @@ int main(int argc, char *argv[])
     // Read the maze file and store the map
     Maze maze; // Declare the maze variable
     read_maze(&maze, file);
+
+    print_maze(&maze);
+
+    char key;
+    do
+    {
+        printf("Current position: %d, %d\n", maze.position.x, maze.position.y);
+        scanf("\r%c", &key);
+        if (key == 'w' || key == 'W')
+        {
+            moveUp(&maze);
+        }
+        // Add more conditions for other keys if needed
+        printf("new position: %d, %d\n", maze.position.x, maze.position.y);
+        print_maze(&maze);
+        // ...
+    } while (1);
+    // moveUp(&maze);
 }
 
 /**
@@ -85,7 +103,7 @@ int main(int argc, char *argv[])
  * @return int 0 on success, 1 on fail
  */
 
-void moveUp(Maze *maze)
+void moveUp(Maze *this)
 {
     // in this function, the game will check if the 'up' movement is valid or not
 
@@ -93,24 +111,24 @@ void moveUp(Maze *maze)
     // the current row and column will be updated
     // if movement invalid
     // it will check if there is a wall up ahead
-    if (maze->position.x > 0 && maze->map[maze->position.x - 1][maze->position.y] != '#')
+    if (this->position.y > 0 && this->map[this->position.y -1][this->position.x] != '#')
     {
-        maze->position.x--;
+        this->position.y--;
         printf("Dialogue: Moved up\n");
     }
-    else if (maze->position.x == 0)
-    {
-        printf("Dialogue: Can't move up. That's the edge\n");
-    }
-    else
-    {
-        printf("Dialogue: Can't move up. There is a wall\n");
-    }
-    // if its the end of the maze
-    if (maze->position.x == maze->end.x && maze->position.y == maze->end.y)
-    {
-        endGame();
-    }
+    // else if (this->position.x == 0)
+    // {
+    //     printf("Dialogue: Can't move up. That's the edge\n");
+    // }
+    // else
+    // {
+    //     printf("Dialogue: Can't move up. There is a wall\n");
+    // }
+    // // if its the end of the this
+    // if (this->position.x == this->end.x && this->position.y == this->end.y)
+    // {
+    //     endGame();
+    // }
 }
 
 void moveDown(Maze *maze)
@@ -351,32 +369,35 @@ int read_maze(Maze *this, FILE *file)
     char ch;
     int startCount = 0;
     int endCount = 0;
-    printf("%d\n", this->height);
     for (int i = 0; i < this->height; i++)
     {
         int chCount = 0;
         // Read each line until it reaches a new line or end of file
         while ((ch = fgetc(file)) != '\n' && ch != EOF)
         {
-            printf("%c\n", ch);
             this->map[i][chCount] = ch;
-            chCount++;
             if (ch == 'S')
             {
+                this->start.x = chCount;
+                this->start.y = i;
+                this->position.x = chCount;
+                this->position.y = i;
                 startCount++;
             }
             if (ch == 'E')
             {
+                this->end.x = chCount;
+                this->end.y = i;
                 endCount++;
-                printf("endCount: %d\n", endCount);
             }
             if (ch != 'S' && ch != 'E' && ch != '#' && ch != ' ')
             {
                 printf("Error: the maze contains invalid characters\n");
                 exit(EXIT_MAZE_ERROR);
             }
+            chCount++;
         }
-        if ((i == this->height -1 && chCount != 0 && chCount != this->width) || (i != this->height -1  && chCount != this->width)) // Check if the row has the same size as the width
+        if ((i == this->height - 1 && chCount != 0 && chCount != this->width) || (i != this->height - 1 && chCount != this->width)) // Check if the row has the same size as the width
         // allowing for the last row to be empty
         {
             printf("Error: each row and column does not have the same size\n");
@@ -415,26 +436,46 @@ int read_maze(Maze *this, FILE *file)
  * @param this pointer to maze to print
  * @param player the current player location
  */
-void print_maze(Maze *this, coord *player)
+void print_maze(Maze *this)
 {
     // make sure we have a leading newline..
     printf("\n");
     for (int i = 0; i < this->height; i++)
     {
-        for (int j = 0; j < this->width; j++)
+        if(i == this->position.y)
         {
-            // decide whether player is on this spot or not
-            if (player->x == j && player->y == i)
+            for (int j = 0; j < this->width; j++)
             {
-                printf("X");
+                if (this->position.x == j)
+                {
+                    printf("X");
+                }
+                else
+                {
+                    printf("%c", this->map[i][j]);
+                }
             }
-            else
-            {
-                printf("%c", this->map[i][j]);
-            }
+            printf("\n");
         }
+        else
+        {
+            printf("%s\n", this->map[i]);
+        }
+        // printf("%s\n", this->map[i]);
+        // for (int j = 0; j < this->width; j++)
+        // {
+        //     // decide whether player is on this spot or not
+        //     if (this->position.x == j && this->position.y == i)
+        //     {
+        //         printf("X");
+        //     }
+        //     else
+        //     {
+        //         printf("%c", this->map[i][j]);
+        //     }
+        // }
         // end each row with a newline.
-        printf("\n");
+        
     }
 }
 
