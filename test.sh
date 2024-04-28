@@ -9,126 +9,126 @@ echo -e "~~ Argument Tests ~~"
 
 
     echo -n "Testing no arguments - "
-    ./maze > out
-    ((all_counter++))
-    if grep -q "Usage: maze <filename>" out;
-    then
-        echo -e "\e[32mPASS\e[0m"
-        ((pass_counter++))
-    else
-        echo -e "\e[31mFAIL\e[0m"
-    fi
+        ./maze > out
+        ((all_counter++))
+        if grep -q "Usage: maze <filename>" out;
+        then
+            echo -e "\e[32mPASS\e[0m"
+            ((pass_counter++))
+        else
+            echo -e "\e[31mFAIL\e[0m"
+        fi
 
 
  # In this case, we are not expecting any success message
  # a message would mean the test failed
     echo -n "Testing 2 arguments - "
-    ./maze x > out
-    ((all_counter++))
-    if grep -q "Usage: maze <filename>" out;
-    then
-        echo -e "\e[31mFAIL\e[0m"
-    else
-        echo -e "\e[32mPASS\e[0m"
-        ((pass_counter++))
-    fi
+        ./maze x > out
+        ((all_counter++))
+        if grep -q "Usage: maze <filename>" out;
+        then
+            echo -e "\e[31mFAIL\e[0m"
+        else
+            echo -e "\e[32mPASS\e[0m"
+            ((pass_counter++))
+        fi
 
 echo -e "\n~~ File Handling~~"
 
     echo -n "Testing bad filename - "
-    ./maze fake_maze.txt > out
-    ((all_counter++))
-    if grep -q "Error: Bad filename" out;
-    then
-        echo -e "\e[32mPASS\e[0m"
-        ((pass_counter++))
-    else
-        echo -e "\e[31mFAIL\e[0m"
-    fi
+        ./maze fake_maze.txt > out
+        ((all_counter++))
+        if grep -q "Error: Bad filename" out;
+        then
+            echo -e "\e[32mPASS\e[0m"
+            ((pass_counter++))
+        else
+            echo -e "\e[31mFAIL\e[0m"
+        fi
 
 
     echo -n "Testing bad permissions - "
- # removing read permissions from this file
-    chmod -r data/bad_perms.txt
- # adding a timeout to limit execution time in case it freezes.
-    timeout 0.2s ./maze data/bad_perms.txt > out
-    ((all_counter++))
-    ((all_counter++))
-    if grep -q "Error: Bad filename" out;
-    then
-        echo -e "\e[32mPASS\e[0m"
-        ((pass_counter++))
-    else
-        echo -e "\e[31mFAIL\e[0m"
-    fi
- # adding read perms back on to this for git.
-    chmod +r data/bad_perms.txt
+        # removing read permissions from this file
+        chmod -r data/bad_perms.txt
+        # adding a timeout to limit execution time in case it freezes.
+        timeout 0.2s ./maze data/bad_perms.txt > out
+        ((all_counter++))
+        ((all_counter++))
+        if grep -q "Error: Bad filename" out;
+        then
+            echo -e "\e[32mPASS\e[0m"
+            ((pass_counter++))
+        else
+            echo -e "\e[31mFAIL\e[0m"
+        fi
+        # adding read perms back on to this for git.
+        chmod +r data/bad_perms.txt
 
 echo -e "\n~~ Maze Dimension Tests~~"
 
     echo -n "Testing invalid maze (empty) - "
-    timeout 0.2s ./maze data/bad_dimension/empty_maze.txt > out
-    ((all_counter++))
-    if grep -q "Error: maze file does not have expected format" out;
-    then
-        echo -e "\e[32mPASS\e[0m"
-        ((pass_counter++))
-    else
-        echo -e "\e[31mFAIL\e[0m"
-    fi
+        timeout 0.2s ./maze data/invalid_maze/empty_maze.txt > out
+        ((all_counter++))
+        if grep -q "Error: the maze is too small" out;
+        then
+            echo -e "\e[32mPASS\e[0m"
+            ((pass_counter++))
+        else
+            echo -e "\e[31mFAIL\e[0m"
+        fi
 
     echo -n "Testing invalid maze (small column size) - "
-    timeout 0.2s ./maze data/invalid_maze_too_small_cols.txt > out
-    ((all_counter++))
-    if grep -q "Error: the maze is too small" out;
-    then
-        echo -e "\e[32mPASS\e[0m"
-        ((pass_counter++))
-    else
-        echo -e "\e[31mFAIL\e[0m"
-    fi
+        timeout 0.2s ./maze data/invalid_maze/invalid_maze_too_small_cols.txt > out
+        ((all_counter++))
+        if grep -q "Error: the maze is too small" out;
+        then
+            echo -e "\e[32mPASS\e[0m"
+            ((pass_counter++))
+        else
+            echo -e "\e[31mFAIL\e[0m"
+        fi
 
     echo -n "Testing invalid maze (small row size) - "
-    timeout 0.2s ./maze data/invalid_maze_too_small_rows.txt > out
-    ((all_counter++))
-    if grep -q "Error: the maze is too small" out;
-    then
-        echo -e "\e[32mPASS\e[0m"
-        ((pass_counter++))
-    else
-        echo -e "\e[31mFAIL\e[0m"
-    fi
+        timeout 0.2s ./maze data/invalid_maze/invalid_maze_too_small_rows.txt > out
+        ((all_counter++))
+        if grep -q "Error: the maze is too small" out;
+        then
+            echo -e "\e[32mPASS\e[0m"
+            ((pass_counter++))
+        else
+            echo -e "\e[31mFAIL\e[0m"
+        fi
 
     echo -n "Testing invalid maze (large column size) - "
-    timeout 0.2s ./maze data/invalid_maze_too_large_cols.txt > out
-    ((all_counter++))
-    if grep -q "Error: the maze is too large" out;
-    then
-        echo -e "\e[32mPASS\e[0m"
-        ((pass_counter++))
-    else
-        echo -e "\e[31mFAIL\e[0m"
-    fi
+        timeout 0.2s ./maze data/invalid_maze/invalid_maze_too_large_cols.txt > out
+        ((all_counter++))
+        if grep -q "Error: the maze is too large" out;
+        then
+            echo -e "\e[32mPASS\e[0m"
+            ((pass_counter++))
+        else
+            echo -e "\e[31mFAIL\e[0m"
+        fi
 
     echo -n "Testing invalid maze (large row size) - "
-    timeout 0.2s ./maze data/invalid_maze_too_large_rows.txt > out
-    ((all_counter++))
-    if grep -q "Error: the maze is too large" out;
-    then
-        echo -e "\e[32mPASS\e[0m"
-        ((pass_counter++))
-    else
-        echo -e "\e[31mFAIL\e[0m"
-    fi
+        timeout 0.2s ./maze data/invalid_maze/invalid_maze_too_large_rows.txt > out
+        ((all_counter++))
+        if grep -q "Error: the maze is too large" out;
+        then
+            echo -e "\e[32mPASS\e[0m"
+            ((pass_counter++))
+        else
+            echo -e "\e[31mFAIL\e[0m"
+        fi
 
 
 echo -e "\n~~ Column And Row Inconsistency Tests~~"
 
  # Testing with multiple file to make sure it can test multiple maze
     echo -n "Testing inconsistent row size (1) - "
-    timeout 0.2s ./maze data/invalid_maze_inconsistent_rows_1.txt > out
+    timeout 0.2s ./maze data/invalid_maze/invalid_maze_inconsistent_rows_1.txt > out
     ((all_counter++))
-    if grep -q "Error: each row does not have the same size" out;
+    if grep -q "Error: each row and column does not have the same size" out;
     then
         echo -e "\e[32mPASS\e[0m"
         ((pass_counter++))
@@ -137,9 +137,9 @@ echo -e "\n~~ Column And Row Inconsistency Tests~~"
     fi
 
     echo -n "Testing inconsistent row size (2) - "
-    timeout 0.2s ./maze data/invalid_maze_inconsistent_rows_2.txt > out
+    timeout 0.2s ./maze data/invalid_maze/invalid_maze_inconsistent_rows_2.txt > out
     ((all_counter++))
-    if grep -q "Error: each row does not have the same size" out;
+    if grep -q "Error: each row and column does not have the same size" out;
     then
         echo -e "\e[32mPASS\e[0m"
         ((pass_counter++))
@@ -148,9 +148,9 @@ echo -e "\n~~ Column And Row Inconsistency Tests~~"
     fi
 
     echo -n "Testing inconsistent row size (3) - "
-    timeout 0.2s ./maze data/invalid_maze_inconsistent_rows_3.txt > out
+    timeout 0.2s ./maze data/invalid_maze/invalid_maze_inconsistent_rows_3.txt > out
     ((all_counter++))
-    if grep -q "Error: each row does not have the same size" out;
+    if grep -q "Error: each row and column does not have the same size" out;
     then
         echo -e "\e[32mPASS\e[0m"
         ((pass_counter++))
@@ -159,9 +159,9 @@ echo -e "\n~~ Column And Row Inconsistency Tests~~"
     fi
 
     echo -n "Testing inconsistent row size (4) - "
-    timeout 0.2s ./maze data/invalid_maze_inconsistent_rows_4.txt > out
+    timeout 0.2s ./maze data/invalid_maze/invalid_maze_inconsistent_rows_4.txt > out
     ((all_counter++))
-    if grep -q "Error: each row does not have the same size" out;
+    if grep -q "Error: each row and column does not have the same size" out;
     then
         echo -e "\e[32mPASS\e[0m"
         ((pass_counter++))
@@ -170,9 +170,9 @@ echo -e "\n~~ Column And Row Inconsistency Tests~~"
     fi
 
     echo -n "Testing inconsistent row size (5) - "
-    timeout 0.2s ./maze data/invalid_maze_inconsistent_rows_5.txt > out
+    timeout 0.2s ./maze data/invalid_maze/invalid_maze_inconsistent_rows_5.txt > out
     ((all_counter++))
-    if grep -q "Error: each row does not have the same size" out;
+    if grep -q "Error: each row and column does not have the same size" out;
     then
         echo -e "\e[32mPASS\e[0m"
         ((pass_counter++))
@@ -182,9 +182,9 @@ echo -e "\n~~ Column And Row Inconsistency Tests~~"
 
 
     echo -n "Testing inconsistent column size (1) - "
-    timeout 0.2s ./maze data/invalid_maze_inconsistent_columns_1.txt > out
+    timeout 0.2s ./maze data/invalid_maze/invalid_maze_inconsistent_columns_1.txt > out
     ((all_counter++))
-    if grep -q "Error: each column does not have the same size" out;
+    if grep -q "Error: each row and column does not have the same size" out;
     then
         echo -e "\e[32mPASS\e[0m"
         ((pass_counter++))
@@ -193,9 +193,9 @@ echo -e "\n~~ Column And Row Inconsistency Tests~~"
     fi
 
     echo -n "Testing inconsistent column size (2) - "
-    timeout 0.2s ./maze data/invalid_maze_inconsistent_columns_2.txt > out
+    timeout 0.2s ./maze data/invalid_maze/invalid_maze_inconsistent_columns_2.txt > out
     ((all_counter++))
-    if grep -q "Error: each column does not have the same size" out;
+    if grep -q "Error: each row and column does not have the same size" out;
     then
         echo -e "\e[32mPASS\e[0m"
         ((pass_counter++))
@@ -204,9 +204,9 @@ echo -e "\n~~ Column And Row Inconsistency Tests~~"
     fi
 
     echo -n "Testing inconsistent column size (3) - "
-    timeout 0.2s ./maze data/invalid_maze_inconsistent_columns_3.txt > out
+    timeout 0.2s ./maze data/invalid_maze/invalid_maze_inconsistent_columns_3.txt > out
     ((all_counter++))
-    if grep -q "Error: each column does not have the same size" out;
+    if grep -q "Error: each row and column does not have the same size" out;
     then
         echo -e "\e[32mPASS\e[0m"
         ((pass_counter++))
@@ -215,9 +215,9 @@ echo -e "\n~~ Column And Row Inconsistency Tests~~"
     fi
 
     echo -n "Testing inconsistent column size (4) - "
-    timeout 0.2s ./maze data/invalid_maze_inconsistent_columns_4.txt > out
+    timeout 0.2s ./maze data/invalid_maze/invalid_maze_inconsistent_columns_4.txt > out
     ((all_counter++))
-    if grep -q "Error: each column does not have the same size" out;
+    if grep -q "Error: each row and column does not have the same size" out;
     then
         echo -e "\e[32mPASS\e[0m"
         ((pass_counter++))
@@ -226,9 +226,9 @@ echo -e "\n~~ Column And Row Inconsistency Tests~~"
     fi
 
     echo -n "Testing inconsistent column size (5) - "
-    timeout 0.2s ./maze data/invalid_maze_inconsistent_columns_5.txt > out
+    timeout 0.2s ./maze data/invalid_maze/invalid_maze_inconsistent_columns_5.txt > out
     ((all_counter++))
-    if grep -q "Error: each column does not have the same size" out;
+    if grep -q "Error: each row and column does not have the same size" out;
     then
         echo -e "\e[32mPASS\e[0m"
         ((pass_counter++))
@@ -239,7 +239,7 @@ echo -e "\n~~ Column And Row Inconsistency Tests~~"
 echo -e "\n~~ Invalid Characters In The Maze Tests~~"
 
     echo -n "Testing invalid characters in maze - "
-    ./maze data/invalid_characters_maze.txt > out
+    ./maze data/invalid_maze/invalid_characters_maze.txt > out
     ((all_counter++))
     if grep -q "Error: the maze contains invalid characters" out;
     then
@@ -252,7 +252,7 @@ echo -e "\n~~ Invalid Characters In The Maze Tests~~"
 echo -e "\n~~ Starting Point Tests~~"
 
     echo -n "Testing no starting point - "
-    ./maze data/invalid_no_starting_point_maze.txt > out
+    ./maze data/invalid_maze/invalid_no_starting_point_maze.txt > out
     ((all_counter++))
     if grep -q "Error: starting point missing" out;
     then
@@ -263,7 +263,7 @@ echo -e "\n~~ Starting Point Tests~~"
     fi
 
     echo -n "Testing multiple starting point - "
-    ./maze data/invalid_multiple_starting_point.txt > out
+    ./maze data/invalid_maze/invalid_multiple_starting_point.txt > out
     ((all_counter++))
     if grep -q "Error: multiple starting point found" out;
     then
@@ -276,7 +276,7 @@ echo -e "\n~~ Starting Point Tests~~"
  # if only one starting point fount, then the program will
  # show no error message
     echo -n "Testing single starting point - "
-    ./maze data/valid_single_starting_point.txt > out
+    ./maze data/valid_maze/valid_single_starting_point.txt > out
     ((all_counter++))
     if grep -q "Error: starting point missing" out;
     then
@@ -294,7 +294,7 @@ echo -e "\n~~ Starting Point Tests~~"
 echo -e "\n~~ Ending Point Tests~~"
 
     echo -n "Testing no ending point - "
-    ./maze data/invalid_no_ending_point_maze.txt > out
+    ./maze data/invalid_maze/invalid_no_ending_point_maze.txt > out
     ((all_counter++))
     if grep -q "Error: no ending point found" out;
     then
@@ -305,7 +305,7 @@ echo -e "\n~~ Ending Point Tests~~"
     fi
 
     echo -n "Testing multiple ending point - "
-    ./maze data/invalid_multiple_ending_point_maze.txt > out
+    ./maze data/invalid_maze/invalid_multiple_ending_point_maze.txt > out
     ((all_counter++))
     if grep -q "Error: multiple ending point found" out;
     then
@@ -318,7 +318,7 @@ echo -e "\n~~ Ending Point Tests~~"
  # if only one starting point fount, then the program will
  # show no error message
     echo -n "Testing single ending point - "
-    ./maze data/valid_single_ending_point_maze.txt > out
+    ./maze data/valid_maze/valid_single_ending_point_maze.txt > out
     ((all_counter++))
     if grep -q "Error: no ending point found" out;
     then
@@ -336,7 +336,7 @@ echo -e "\n~~ Ending Point Tests~~"
 echo -e "\n~~ Valid Maze Tests~~"
 
     echo -n "Testing valid maze (1) - "
-    ./maze data/valid_maze_1.txt > out
+    ./maze data/valid_maze/valid_maze_1.txt > out
     ((all_counter++))
     if grep -q "Success : maze loaded successfully" out;
     then
@@ -347,7 +347,18 @@ echo -e "\n~~ Valid Maze Tests~~"
     fi
 
     echo -n "Testing valid maze (2) - "
-    ./maze data/valid_maze_2.txt > out
+    ./maze data/valid_maze/valid_maze_2.txt > out
+    ((all_counter++))
+    if grep -q "Success : maze loaded successfully" out;
+    then
+        echo -e "\e[32mPASS\e[0m"
+        ((pass_counter++))
+    else
+        echo -e "\e[31mFAIL\e[0m"
+    fi
+
+    echo -n "Testing valid maze (3) - "
+    ./maze data/valid_maze/valid_maze_3.txt > out
     ((all_counter++))
     if grep -q "Success : maze loaded successfully" out;
     then
@@ -360,7 +371,7 @@ echo -e "\n~~ Valid Maze Tests~~"
 echo -e "\n~~ Up Movement Tests~~"
 
     echo -n "Testing successful moving up (lower case) - "
-    ./maze data/valid_maze_3.txt < data/moving_up_lower_case.txt > out
+    ./maze data/valid_maze/valid_maze_3.txt < data/moving_up_lower_case.txt > out
     ((all_counter++))
     if grep -q "Dialogue : you moved up" out;
     then
@@ -371,7 +382,7 @@ echo -e "\n~~ Up Movement Tests~~"
     fi
 
     echo -n "Testing successful moving up (upper case) - "
-    ./maze data/valid_maze_3.txt < data/moving_up_upper_case.txt > out
+    ./maze data/valid_maze/valid_maze_3.txt < data/moving_up_upper_case.txt > out
     ((all_counter++))
     if grep -q "Dialogue : you moved up" out;
     then
@@ -384,7 +395,7 @@ echo -e "\n~~ Up Movement Tests~~"
  # if user can't move up, it means there is either a wall
  # or its the edge
     echo -n "Testing moving into wall upwards - "
-    ./maze data/valid_maze_blocked_y.txt < data/moving_up_lower_case.txt > out
+    ./maze data/valid_maze/valid_maze_blocked_y.txt < data/moving_up_lower_case.txt > out
     ((all_counter++))
     if grep -q "Dialogue : can't move up. There is a wall" out;
     then
@@ -398,7 +409,7 @@ echo -e "\n~~ Up Movement Tests~~"
  # There can be two edge cases
  # in this test there are no walls upwards
     echo -n "Testing moving of the edge (up - 1) - "
-    ./maze data/valid_maze_start_at_top.txt < data/moving_up_lower_case.txt > out
+    ./maze data/valid_maze/valid_maze_start_at_top.txt < data/moving_up_lower_case.txt > out
     ((all_counter++))
     if grep -q "Dialogue : can't move up. That's the edge" out;
     then

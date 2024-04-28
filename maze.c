@@ -38,8 +38,6 @@ typedef struct __Maze
 } Maze;
 
 // Function prototypes
-Maze loadMazeFromFile(FILE *file);
-void displayMaze(Maze maze);
 void moveUp(Maze *maze);
 void moveDown(Maze *maze);
 void moveRight(Maze *maze);
@@ -54,33 +52,28 @@ int get_height(FILE *file);
 int read_maze(Maze *this, FILE *file);
 int create_maze(Maze *this, int height, int width);
 void free_maze(Maze *this);
-
+int validateDimention(int dimentions);
 
 int main(int argc, char *argv[])
 {
     // Check for correct number of command-line arguments
     if (argc != 2)
     {
-        printf("Usage: studentData <filename>");
-        return EXIT_FAILURE;
+        printf("Usage: maze <filename>\n");
+        return EXIT_ARG_ERROR;
     }
 
     // Open the maze file
     FILE *file = fopen(argv[1], "r");
     if (file == NULL)
     {
-        printf("Error: Bad filename");
-        return EXIT_FAILURE;
+        printf("Error: Bad filename\n");
+        return EXIT_FILE_ERROR;
     }
 
-    // Get the width of the maze file
-    int width = 0;
-    width = get_width(file);
-    printf("Width of the maze file: %d\n", width);
-
-    int height = 0;
-    height = get_height(file);
-    printf("Height of the maze file: %d\n", height);
+    // Read the maze file and store the map
+    Maze maze; // Declare the maze variable
+    read_maze(&maze, file);
 }
 
 /**
@@ -91,21 +84,6 @@ int main(int argc, char *argv[])
  * @param width width to allocate
  * @return int 0 on success, 1 on fail
  */
-Maze loadMazeFromFile(FILE *file)
-{
-    Maze maze;
-    int row = 0, column = 0;
-    char ch;
-
-    // in this function, the game will scan the maze file and store each of the wall
-    // and identify the starting row and column
-    // and the ending row and column
-    while ((ch = fgetc(file)) != EOF)
-    {
-    }
-    // maze.columns = column;
-    return maze;
-}
 
 void moveUp(Maze *maze)
 {
@@ -246,22 +224,18 @@ int create_maze(Maze *this, int height, int width)
     this->map = (char **)malloc(height * sizeof(char *));
     if (this->map == NULL)
     {
-        printf("Error: Memory allocation failed");
-        return 1;
+        printf("Error: Memory allocation failed\n");
+        exit(EXIT_UNEXPECTED_ERROR);
     }
     for (int i = 0; i < height; i++)
     {
         this->map[i] = (char *)malloc(width * sizeof(char));
         if (this->map[i] == NULL)
         {
-            printf("Error: Memory allocation failed");
-            return 1;
+            printf("Error: Memory allocation failed\n");
+            exit(EXIT_UNEXPECTED_ERROR);
         }
     }
-
-    // Set the height and width
-    this->height = height;
-    this->width = width;
 
     // Initialize the start, end, and position coordinates
     this->start.x = -1;
@@ -271,26 +245,26 @@ int create_maze(Maze *this, int height, int width)
     this->position.x = -1;
     this->position.y = -1;
 
-    // Read the maze file and store the map
-    FILE *file = fopen("maze.txt", "r");
-    if (file == NULL)
-    {
-        printf("Error: Bad filename");
-        return 1;
-    }
-    if (read_maze(this, file) == 1)
-    {
-        fclose(file);
-        return 1;
-    }
-    fclose(file);
+    // // Read the maze file and store the map
+    // FILE *file = fopen("maze.txt", "r");
+    // if (file == NULL)
+    // {
+    //     printf("Error: Bad filename");
+    //     return 1;
+    // }
+    // if (read_maze(this, file) == 1)
+    // {
+    //     fclose(file);
+    //     return 1;
+    // }
+    // fclose(file);
 
-    // Check if the maze is valid
-    if (this->start.x == -1 || this->start.y == -1 || this->end.x == -1 || this->end.y == -1 || this->position.x == -1 || this->position.y == -1)
-    {
-        printf("Error: Invalid maze");
-        return 1;
-    }
+    // // Check if the maze is valid
+    // if (this->start.x == -1 || this->start.y == -1 || this->end.x == -1 || this->end.y == -1 || this->position.x == -1 || this->position.y == -1)
+    // {
+    //     printf("Error: Invalid maze");
+    //     return 1;
+    // }
 
     return 0;
 }
@@ -363,54 +337,75 @@ int get_height(FILE *file)
 int read_maze(Maze *this, FILE *file)
 {
     // Get the width and height of the maze
-    int width = get_width(file);
-    if (width == 0)
-    {
-        return 1;
-    }
-    int height = get_height(file);
-    if (height == 0)
-    {
-        return 1;
-    }
+    this->width = get_width(file);
+    validateDimention(this->width);
+
+    this->height = get_height(file);
+    validateDimention(this->height);
 
     // Create the maze
-    if (create_maze(this, height, width) == 1)
-    {
-        return 1;
-    }
-
-    // Read the maze file
-    if (fgetc(file) != '\n')
-    {
-        printf("Error: Invalid maze");
-        return 1;
-    }
+    create_maze(this, this->height, this->width);
 
     // Read the maze file and store the map
-    int row = 0, column = 0;
+
     char ch;
-    while ((ch = fgetc(file)) != EOF)
+    int startCount = 0;
+    int endCount = 0;
+    printf("%d\n", this->height);
+    for (int i = 0; i < this->height; i++)
     {
-        if (ch == '\n')
+        int chCount = 0;
+        // Read each line until it reaches a new line or end of file
+        while ((ch = fgetc(file)) != '\n' && ch != EOF)
         {
-            row++;
-            column = 0;
+            printf("%c\n", ch);
+            this->map[i][chCount] = ch;
+            chCount++;
+            if (ch == 'S')
+            {
+                startCount++;
+            }
+            if (ch == 'E')
+            {
+                endCount++;
+                printf("endCount: %d\n", endCount);
+            }
+            if (ch != 'S' && ch != 'E' && ch != '#' && ch != ' ')
+            {
+                printf("Error: the maze contains invalid characters\n");
+                exit(EXIT_MAZE_ERROR);
+            }
         }
-        else
+        if ((i == this->height -1 && chCount != 0 && chCount != this->width) || (i != this->height -1  && chCount != this->width)) // Check if the row has the same size as the width
+        // allowing for the last row to be empty
         {
-            this->map[row][column] = ch;
-            column++;
+            printf("Error: each row and column does not have the same size\n");
+            exit(EXIT_MAZE_ERROR);
         }
+        // printf("%s\n", this->map[i]); // Print the scanned line
     }
 
-    // Check if the maze is valid
-    if (this->start.x == -1 || this->start.y == -1 || this->end.x == -1 || this->end.y == -1 || this->position.x == -1 || this->position.y == -1)
+    if (startCount == 0)
     {
-        printf("Error: Invalid maze");
-        return 1;
+        printf("Error: starting point missing\n");
+        exit(EXIT_MAZE_ERROR);
     }
-
+    if (startCount > 1)
+    {
+        printf("Error: multiple starting point found\n");
+        exit(EXIT_MAZE_ERROR);
+    }
+    if (endCount == 0)
+    {
+        printf("Error: no ending point found\n");
+        exit(EXIT_MAZE_ERROR);
+    }
+    if (endCount > 1)
+    {
+        printf("Error: multiple ending point found\n");
+        exit(EXIT_MAZE_ERROR);
+    }
+    printf("Success : maze loaded successfully\n");
     return 0;
 }
 
@@ -488,6 +483,28 @@ int has_won(Maze *this, coord *player)
 {
 }
 
+/**
+ * @brief Check whether the player has won and return a pseudo-boolean
+ *
+ * @param this current maze
+ * @param player player position
+ * @return int 0 for valid dimensions
+ */
+int validateDimention(int dimentions)
+{
+    if (dimentions < MIN_DIM)
+    {
+        printf("Error: the maze is too small\n");
+        exit(EXIT_MAZE_ERROR);
+    }
+    if (dimentions > MAX_DIM)
+    {
+        printf("Error: the maze is too large\n");
+        exit(EXIT_MAZE_ERROR);
+    }
+    return 0;
+}
+
 // int main()
 // {
 //     // check args
@@ -508,47 +525,45 @@ int has_won(Maze *this, coord *player)
 //     // return, free, exit
 // }
 
+// Maze maze = loadMazeFromFile(file);
 
+// // Close the file
+// fclose(file);
 
-    // Maze maze = loadMazeFromFile(file);
+// displayMaze(maze);
 
-    // // Close the file
-    // fclose(file);
+// // Navigation
+// char key;
+// do
+// {
+//     scanf("\r%c", &key);
 
-    // displayMaze(maze);
+//     switch (key)
+//     {
+//     case 'w':
+//     case 'W':
+//         moveUp(&maze);
+//         break;
+//     case 's':
+//     case 'S':
+//         moveDown(&maze);
+//         break;
+//     case 'd':
+//     case 'D':
+//         moveRight(&maze);
+//         break;
+//     case 'a':
+//     case 'A':
+//         moveLeft(&maze);
+//         break;
+//     case 'm':
+//     case 'M':
+//         printMap(&maze);
+//         break;
+//     default:
+//         printf("Error: invalid key\n");
+//     }
 
-    // // Navigation
-    // char key;
-    // do
-    // {
-    //     scanf("\r%c", &key);
+// } while (1);
 
-    //     switch (key)
-    //     {
-    //     case 'w':
-    //     case 'W':
-    //         moveUp(&maze);
-    //         break;
-    //     case 's':
-    //     case 'S':
-    //         moveDown(&maze);
-    //         break;
-    //     case 'd':
-    //     case 'D':
-    //         moveRight(&maze);
-    //         break;
-    //     case 'a':
-    //     case 'A':
-    //         moveLeft(&maze);
-    //         break;
-    //     case 'm':
-    //     case 'M':
-    //         printMap(&maze);
-    //         break;
-    //     default:
-    //         printf("Error: invalid key\n");
-    //     }
-
-    // } while (1);
-
-    // return EXIT_SUCCESS;
+// return EXIT_SUCCESS;
