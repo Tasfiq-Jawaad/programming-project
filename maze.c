@@ -174,7 +174,6 @@ void moveDown(Maze *maze)
     // the current row and column will be updated
     // if movement invalid
     // it will check if there is a wall up ahead
-    printf("%d\n", maze->position.y);
     if (maze->position.y < maze->height - 1 && maze->map[maze->position.y + 1][maze->position.x] != '#')
     {
         maze->position.y++;
@@ -233,7 +232,6 @@ void moveLeft(Maze *maze)
     // it will check if there is a wall up ahead
     if (maze->position.x > 0 && maze->map[maze->position.y][maze->position.x -1] != '#')
     {
-        printf("%c\n", maze->map[maze->position.y][maze->position.x -1]);
         maze->position.x--;
         printf("Dialogue: you moved left\n");
     }
