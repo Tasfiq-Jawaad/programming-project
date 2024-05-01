@@ -53,6 +53,7 @@ int read_maze(Maze *this, FILE *file);
 int create_maze(Maze *this, int height, int width);
 void free_maze(Maze *this);
 int validateDimention(int dimentions);
+void clearBuffer();
 
 int main(int argc, char *argv[])
 {
@@ -77,18 +78,52 @@ int main(int argc, char *argv[])
 
     print_maze(&maze);
 
-    char key;
+    char input[3];
     do
     {
-        printf("Current position: %d, %d\n", maze.position.x, maze.position.y);
-        scanf("\r%c", &key);
-        if (key == 'w' || key == 'W')
+        printf("Enter a character: ");
+        fgets(input, sizeof(input), stdin);
+        // scanf("%s", input);
+        input[strcspn(input, "\n")] = '\0'; // Remove the newline character
+        if (strlen(input) > 1)
         {
-            moveUp(&maze);
+            printf("Error: Only one character allowed\n");
+            clearBuffer();
         }
+        else
+        {
+            char character = input[0];
+            // Rest of your code using the character input
+            if (character == 'w' || character == 'W')
+            {
+                moveUp(&maze);
+            }
+            else if (character == 's' || character == 'S')
+            {
+                moveDown(&maze);
+            }
+            else if (character == 'd' || character == 'D')
+            {
+                moveRight(&maze);
+            }
+            else if (character == 'a' || character == 'A')
+            {
+                moveLeft(&maze);
+            }
+            else if (character == 'm' || character == 'M')
+            {
+                print_maze(&maze);
+            }
+            else
+            {
+                printf("Error: invalid key\n");
+            }
+            // clearBuffer();
+            // Remove the else block for 'w' or 'W' characters
+        }
+
         // Add more conditions for other keys if needed
-        printf("new position: %d, %d\n", maze.position.x, maze.position.y);
-        print_maze(&maze);
+        // print_maze(&maze);
         // ...
     } while (1);
     // moveUp(&maze);
@@ -103,32 +138,33 @@ int main(int argc, char *argv[])
  * @return int 0 on success, 1 on fail
  */
 
-void moveUp(Maze *this)
+void moveUp(Maze *maze)
 {
-    // in this function, the game will check if the 'up' movement is valid or not
+    // in maze function, the game will check if the 'up' movement is valid or not
 
     // if movement is valid
     // the current row and column will be updated
     // if movement invalid
     // it will check if there is a wall up ahead
-    if (this->position.y > 0 && this->map[this->position.y -1][this->position.x] != '#')
+    
+    if (maze->position.y > 0 && maze->map[maze->position.y - 1][maze->position.x] != '#')
     {
-        this->position.y--;
-        printf("Dialogue: Moved up\n");
+        maze->position.y--;
+        printf("Dialogue: you moved up\n");
     }
-    // else if (this->position.x == 0)
-    // {
-    //     printf("Dialogue: Can't move up. That's the edge\n");
-    // }
-    // else
-    // {
-    //     printf("Dialogue: Can't move up. There is a wall\n");
-    // }
-    // // if its the end of the this
-    // if (this->position.x == this->end.x && this->position.y == this->end.y)
-    // {
-    //     endGame();
-    // }
+    else if (maze->position.y == 0)
+    {
+        printf("Dialogue: can't move up. That's the edge\n");
+    }
+    else
+    {
+        printf("Dialogue: can't move up. There is a wall\n");
+    }
+    // if its the end of the maze
+    if (maze->position.x == maze->end.x && maze->position.y == maze->end.y)
+    {
+        endGame();
+    }
 }
 
 void moveDown(Maze *maze)
@@ -138,18 +174,19 @@ void moveDown(Maze *maze)
     // the current row and column will be updated
     // if movement invalid
     // it will check if there is a wall up ahead
-    if (maze->position.x < maze->height - 1 && maze->map[maze->position.x + 1][maze->position.y] != '#')
+    printf("%d\n", maze->position.y);
+    if (maze->position.y < maze->height - 1 && maze->map[maze->position.y + 1][maze->position.x] != '#')
     {
-        maze->position.x++;
-        printf("Dialogue: Moved down\n");
+        maze->position.y++;
+        printf("Dialogue: you moved down\n");
     }
-    else if (maze->position.x == maze->height - 1)
+    else if (maze->position.y == maze->height - 1)
     {
-        printf("Dialogue: Can't move down. That's the edge\n");
+        printf("Dialogue: can't move down. That's the edge\n");
     }
     else
     {
-        printf("Dialogue: Can't move down. There is a wall\n");
+        printf("Dialogue: can't move down. There is a wall\n");
     }
     // if its the end of the maze
     if (maze->position.x == maze->end.x && maze->position.y == maze->end.y)
@@ -166,18 +203,18 @@ void moveRight(Maze *maze)
     // the current row and column will be updated
     // if movement invalid
     // it will check if there is a wall up ahead
-    if (maze->position.y < maze->width - 1 && maze->map[maze->position.x][maze->position.y + 1] != '#')
+    if (maze->position.x < maze->width -1 && maze->map[maze->position.y][maze->position.x + 1] != '#')
     {
-        maze->position.y++;
-        printf("Dialogue: Moved right\n");
+        maze->position.x++;
+        printf("Dialogue: you moved right\n");
     }
-    else if (maze->position.y == maze->width - 1)
+    else if (maze->position.x == maze->width - 1)
     {
-        printf("Dialogue: Can't move right. That's the edge\n");
+        printf("Dialogue: can't move right. That's the edge\n");
     }
     else
     {
-        printf("Dialogue: Can't move right. There is a wall\n");
+        printf("Dialogue: can't move right. There is a wall\n");
     }
     // if its the end of the maze
     if (maze->position.x == maze->end.x && maze->position.y == maze->end.y)
@@ -194,18 +231,19 @@ void moveLeft(Maze *maze)
     // the current row and column will be updated
     // if movement invalid
     // it will check if there is a wall up ahead
-    if (maze->position.y > 0 && maze->map[maze->position.x][maze->position.y - 1] != '#')
+    if (maze->position.x > 0 && maze->map[maze->position.y][maze->position.x -1] != '#')
     {
-        maze->position.y--;
-        printf("Dialogue: Moved left\n");
+        printf("%c\n", maze->map[maze->position.y][maze->position.x -1]);
+        maze->position.x--;
+        printf("Dialogue: you moved left\n");
     }
-    else if (maze->position.y == 0)
+    else if (maze->position.x == 0)
     {
-        printf("Dialogue: Can't move left. That's the edge\n");
+        printf("Dialogue: can't move left. That's the edge\n");
     }
     else
     {
-        printf("Dialogue: Can't move left. There is a wall\n");
+        printf("Dialogue: can't move left. There is a wall\n");
     }
     // if its the end of the maze
     if (maze->position.x == maze->end.x && maze->position.y == maze->end.y)
@@ -216,14 +254,14 @@ void moveLeft(Maze *maze)
 
 // void printMap(Maze maze)
 // {
-//     // in this function, the program will printf the whole map
+//     // in this function, the program will printf the wgit adhole map
 //     // and replace the current position with X
 // }
 
 int endGame()
 {
     printf("You won!\n");
-    return EXIT_SUCCESS;
+    exit(EXIT_SUCCESS);
 }
 
 // ----------------------------------------------
@@ -442,7 +480,7 @@ void print_maze(Maze *this)
     printf("\n");
     for (int i = 0; i < this->height; i++)
     {
-        if(i == this->position.y)
+        if (i == this->position.y)
         {
             for (int j = 0; j < this->width; j++)
             {
@@ -475,7 +513,6 @@ void print_maze(Maze *this)
         //     }
         // }
         // end each row with a newline.
-        
     }
 }
 
@@ -608,3 +645,11 @@ int validateDimention(int dimentions)
 // } while (1);
 
 // return EXIT_SUCCESS;
+
+void clearBuffer()
+{
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF)
+    {
+    }
+}
