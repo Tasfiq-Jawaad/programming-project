@@ -7,7 +7,7 @@
 #include "define.h"
 #include "utility.h"
 
-void read_maze(Maze *this, Coord *player, FILE *file);
+void read_maze(Maze *maze, Coord *player, FILE *file);
 void create_maze(Maze *maze);
 void display_menu();
 
