@@ -1,0 +1,15 @@
+Success : maze loaded successfully
+
+########
+#   # ##
+### ## #
+#   ####
+# # ####
+#X#E####
+Enter a character: Dialogue: you moved up
+Enter a character: Dialogue: you moved up
+Enter a character: Dialogue: you moved right
+Enter a character: Dialogue: you moved right
+Enter a character: Dialogue: you moved down
+Enter a character: Dialogue: you moved down
+You won!

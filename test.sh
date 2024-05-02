@@ -1,6 +1,6 @@
 #!/bin/bash
 
-gcc ./maze.c -o maze
+gcc ./maze.c ./utility.c -o maze
 
 all_counter=0
 pass_counter=0
