@@ -90,17 +90,17 @@ int validateDimension(int dimension)
  * @param maze pointer to maze to print
  * @param player the current player location
  */
-void print_map(Maze *maze)
+void print_map(Maze *maze, Coord *player)
 {
     // make sure we have a leading newline..
     printf("\n");
     for (int i = 0; i < maze->height; i++)
     {
-        if (i == maze->position.y)
+        if (i == player->y)
         {
             for (int j = 0; j < maze->width; j++)
             {
-                if (maze->position.x == j)
+                if (player->x == j)
                 {
                     printf("X");
                 }
@@ -123,9 +123,9 @@ void print_map(Maze *maze)
  *
  * @return void
  */
-void isEndGame(Maze *maze)
+void isEndGame(Maze *maze, Coord *player)
 {
-    if (maze->position.x == maze->end.x && maze->position.y == maze->end.y)
+    if (player->x == maze->end.x && player->y == maze->end.y)
     {
         printf("You won!\n");
         free_maze(maze);
@@ -153,14 +153,14 @@ void free_maze(Maze *maze)
  * @param maze the maze structure containing the map
  * @return void as the maze is updated in place
  */
-void moveUp(Maze *maze)
+void moveUp(Maze *maze, Coord *player)
 {
-    if (maze->position.y > 0 && maze->map[maze->position.y - 1][maze->position.x] != '#')
+    if (player->y > 0 && maze->map[player->y - 1][player->x] != '#')
     {
-        maze->position.y--;
+        player->y--;
         printf("Dialogue: you moved up\n");
     }
-    else if (maze->position.y == 0) // if the player is at the top edge/row
+    else if (player->y == 0) // if the player is at the top edge/row
     {
         printf("Dialogue: can't move up. That's the edge\n");
     }
@@ -169,7 +169,7 @@ void moveUp(Maze *maze)
         printf("Dialogue: can't move up. There is a wall\n");
     }
     // check for end of game
-    isEndGame(maze);
+    isEndGame(maze, player);
 }
 
 /**
@@ -178,14 +178,14 @@ void moveUp(Maze *maze)
  * @param maze the maze structure containing the map
  * @return void as the maze is updated in place
  */
-void moveDown(Maze *maze)
+void moveDown(Maze *maze, Coord *player)
 {
-    if (maze->position.y < maze->height - 1 && maze->map[maze->position.y + 1][maze->position.x] != '#')
+    if (player->y < maze->height - 1 && maze->map[player->y + 1][player->x] != '#')
     {
-        maze->position.y++;
+        player->y++;
         printf("Dialogue: you moved down\n");
     }
-    else if (maze->position.y == maze->height - 1) // if the player is at the bottom edge/row
+    else if (player->y == maze->height - 1) // if the player is at the bottom edge/row
     {
         printf("Dialogue: can't move down. That's the edge\n");
     }
@@ -194,7 +194,7 @@ void moveDown(Maze *maze)
         printf("Dialogue: can't move down. There is a wall\n");
     }
     // check for end of game
-    isEndGame(maze);
+    isEndGame(maze, player);
 }
 
 /**
@@ -203,14 +203,14 @@ void moveDown(Maze *maze)
  * @param maze the maze structure containing the map
  * @return void as the maze is updated in place
  */
-void moveRight(Maze *maze)
+void moveRight(Maze *maze, Coord *player)
 {
-    if (maze->position.x < maze->width - 1 && maze->map[maze->position.y][maze->position.x + 1] != '#')
+    if (player->x < maze->width - 1 && maze->map[player->y][player->x + 1] != '#')
     {
-        maze->position.x++;
+        player->x++;
         printf("Dialogue: you moved right\n");
     }
-    else if (maze->position.x == maze->width - 1) // if the player is at the right edge/column
+    else if (player->x == maze->width - 1) // if the player is at the right edge/column
     {
         printf("Dialogue: can't move right. That's the edge\n");
     }
@@ -219,7 +219,7 @@ void moveRight(Maze *maze)
         printf("Dialogue: can't move right. There is a wall\n");
     }
     // check for end of game
-    isEndGame(maze);
+    isEndGame(maze, player);
 }
 
 /**
@@ -228,14 +228,14 @@ void moveRight(Maze *maze)
  * @param maze the maze structure containing the map
  * @return void as the maze is updated in place
  */
-void moveLeft(Maze *maze)
+void moveLeft(Maze *maze, Coord *player)
 {
-    if (maze->position.x > 0 && maze->map[maze->position.y][maze->position.x - 1] != '#')
+    if (player->x > 0 && maze->map[player->y][player->x - 1] != '#')
     {
-        maze->position.x--;
+        player->x--;
         printf("Dialogue: you moved left\n");
     }
-    else if (maze->position.x == 0) // if the player is at the left edge/column
+    else if (player->x == 0) // if the player is at the left edge/column
     {
         printf("Dialogue: can't move left. That's the edge\n");
     }
@@ -244,7 +244,7 @@ void moveLeft(Maze *maze)
         printf("Dialogue: can't move left. There is a wall\n");
     }
     // check for end of game
-    isEndGame(maze);
+    isEndGame(maze, player);
 }
 
 /**

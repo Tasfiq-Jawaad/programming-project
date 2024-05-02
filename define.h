@@ -31,7 +31,6 @@ typedef struct __Maze
     int width;
     Coord start;
     Coord end;
-    Coord position;
 } Maze;
 
 #endif

@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 
 
     // initially show the map for the player
-    print_map(&maze);
+    print_map(&maze, &player);
 
     // display the menu
     display_menu();
@@ -67,23 +67,23 @@ int main(int argc, char *argv[])
             {
             case 'w':
             case 'W':
-                moveUp(&maze);
+                moveUp(&maze, &player);
                 break;
             case 's':
             case 'S':
-                moveDown(&maze);
+                moveDown(&maze, &player);
                 break;
             case 'd':
             case 'D':
-                moveRight(&maze);
+                moveRight(&maze, &player);
                 break;
             case 'a':
             case 'A':
-                moveLeft(&maze);
+                moveLeft(&maze, &player);
                 break;
             case 'm':
             case 'M':
-                print_map(&maze);
+                print_map(&maze, &player);
                 break;
             default:
                 printf("Error: invalid key\n");
@@ -119,8 +119,8 @@ void read_maze(Maze *maze, Coord *player, FILE *file)
             {
                 maze->start.x = chCount;
                 maze->start.y = i;
-                maze->position.x = chCount;
-                maze->position.y = i;
+                player->x = chCount;
+                player->y = i;
                 startCount++;
             }
             if (ch == 'E')
@@ -198,8 +198,6 @@ void create_maze(Maze *maze)
     maze->start.y = -1;
     maze->end.x = -1;
     maze->end.y = -1;
-    maze->position.x = -1;
-    maze->position.y = -1;
 }
 
 /**
