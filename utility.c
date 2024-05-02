@@ -1,6 +1,23 @@
 #include "define.h"
 #include "utility.h"
 
+/**
+ * @brief Open a file and check if it is valid
+ *
+ * @param filename the name of the file to open
+ * @param mode the mode to open the file in
+ * @return FILE* the file pointer
+ */
+FILE *open_file(const char *filename, const char *mode)
+{
+    FILE *file = fopen(filename, mode);
+    if (file == NULL)
+    {
+        printf("Error: Bad filename\n");
+        exit(EXIT_FILE_ERROR);
+    }
+    return file;
+}
 
 /**
  * @brief return the width of the mazefile
@@ -46,21 +63,20 @@ int get_height(FILE *file)
     return height;
 }
 
-
 /**
- * @brief check if the maze dimention is valid
+ * @brief check if the maze dimension is valid
  *
- * @param dimention
+ * @param dimension
  * @return int 0 for valid dimensions
  */
-int validateDimention(int dimention)
+int validateDimension(int dimension)
 {
-    if (dimention < MIN_DIM)
+    if (dimension < MIN_DIM)
     {
         printf("Error: the maze is too small\n");
         exit(EXIT_MAZE_ERROR);
     }
-    if (dimention > MAX_DIM)
+    if (dimension > MAX_DIM)
     {
         printf("Error: the maze is too large\n");
         exit(EXIT_MAZE_ERROR);
@@ -68,12 +84,68 @@ int validateDimention(int dimention)
     return 0;
 }
 
+/**
+ * @brief Prints the map
+ *
+ * @param maze pointer to maze to print
+ * @param player the current player location
+ */
+void print_map(Maze *maze)
+{
+    // make sure we have a leading newline..
+    printf("\n");
+    for (int i = 0; i < maze->height; i++)
+    {
+        if (i == maze->position.y)
+        {
+            for (int j = 0; j < maze->width; j++)
+            {
+                if (maze->position.x == j)
+                {
+                    printf("X");
+                }
+                else
+                {
+                    printf("%c", maze->map[i][j]);
+                }
+            }
+            printf("\n");
+        }
+        else
+        {
+            printf("%s\n", maze->map[i]);
+        }
+    }
+}
 
+/**
+ * @brief check if the player has reached the end of the maze
+ *
+ * @return void
+ */
+void isEndGame(Maze *maze)
+{
+    if (maze->position.x == maze->end.x && maze->position.y == maze->end.y)
+    {
+        printf("You won!\n");
+        free_maze(maze);
+        exit(EXIT_SUCCESS);
+    }
+}
 
-
-
-
-
+/**
+ * @brief Free the memory allocated to the maze struct
+ *
+ * @param maze the pointer to the struct to free
+ */
+void free_maze(Maze *maze)
+{
+    for (int i = 0; i < maze->height; i++)
+    {
+        free(maze->map[i]);
+    }
+    free(maze->map);
+}
 
 /**
  * @brief Move the player up in the maze
@@ -81,7 +153,6 @@ int validateDimention(int dimention)
  * @param maze the maze structure containing the map
  * @return void as the maze is updated in place
  */
-
 void moveUp(Maze *maze)
 {
     if (maze->position.y > 0 && maze->map[maze->position.y - 1][maze->position.x] != '#')
@@ -89,7 +160,7 @@ void moveUp(Maze *maze)
         maze->position.y--;
         printf("Dialogue: you moved up\n");
     }
-    else if (maze->position.y == 0)
+    else if (maze->position.y == 0) // if the player is at the top edge/row
     {
         printf("Dialogue: can't move up. That's the edge\n");
     }
@@ -97,26 +168,24 @@ void moveUp(Maze *maze)
     {
         printf("Dialogue: can't move up. There is a wall\n");
     }
-    // if its the end of the maze
-    if (maze->position.x == maze->end.x && maze->position.y == maze->end.y)
-    {
-        endGame();
-    }
+    // check for end of game
+    isEndGame(maze);
 }
 
+/**
+ * @brief Move the player down in the maze
+ *
+ * @param maze the maze structure containing the map
+ * @return void as the maze is updated in place
+ */
 void moveDown(Maze *maze)
 {
-    // in this function, the game will check if the 'down' movement is valid or not
-    // if movement is valid
-    // the current row and column will be updated
-    // if movement invalid
-    // it will check if there is a wall up ahead
     if (maze->position.y < maze->height - 1 && maze->map[maze->position.y + 1][maze->position.x] != '#')
     {
         maze->position.y++;
         printf("Dialogue: you moved down\n");
     }
-    else if (maze->position.y == maze->height - 1)
+    else if (maze->position.y == maze->height - 1) // if the player is at the bottom edge/row
     {
         printf("Dialogue: can't move down. That's the edge\n");
     }
@@ -124,27 +193,24 @@ void moveDown(Maze *maze)
     {
         printf("Dialogue: can't move down. There is a wall\n");
     }
-    // if its the end of the maze
-    if (maze->position.x == maze->end.x && maze->position.y == maze->end.y)
-    {
-        endGame();
-    }
+    // check for end of game
+    isEndGame(maze);
 }
 
+/**
+ * @brief Move the player right in the maze
+ *
+ * @param maze the maze structure containing the map
+ * @return void as the maze is updated in place
+ */
 void moveRight(Maze *maze)
 {
-    // in this function, the game will check if the 'right' movement is valid or not
-
-    // if movement is valid
-    // the current row and column will be updated
-    // if movement invalid
-    // it will check if there is a wall up ahead
     if (maze->position.x < maze->width - 1 && maze->map[maze->position.y][maze->position.x + 1] != '#')
     {
         maze->position.x++;
         printf("Dialogue: you moved right\n");
     }
-    else if (maze->position.x == maze->width - 1)
+    else if (maze->position.x == maze->width - 1) // if the player is at the right edge/column
     {
         printf("Dialogue: can't move right. That's the edge\n");
     }
@@ -152,27 +218,24 @@ void moveRight(Maze *maze)
     {
         printf("Dialogue: can't move right. There is a wall\n");
     }
-    // if its the end of the maze
-    if (maze->position.x == maze->end.x && maze->position.y == maze->end.y)
-    {
-        endGame();
-    }
+    // check for end of game
+    isEndGame(maze);
 }
 
+/**
+ * @brief Move the player left in the maze
+ *
+ * @param maze the maze structure containing the map
+ * @return void as the maze is updated in place
+ */
 void moveLeft(Maze *maze)
 {
-    // in this function, the game will check if the 'left' movement is valid or not
-
-    // if movement is valid
-    // the current row and column will be updated
-    // if movement invalid
-    // it will check if there is a wall up ahead
     if (maze->position.x > 0 && maze->map[maze->position.y][maze->position.x - 1] != '#')
     {
         maze->position.x--;
         printf("Dialogue: you moved left\n");
     }
-    else if (maze->position.x == 0)
+    else if (maze->position.x == 0) // if the player is at the left edge/column
     {
         printf("Dialogue: can't move left. That's the edge\n");
     }
@@ -180,155 +243,19 @@ void moveLeft(Maze *maze)
     {
         printf("Dialogue: can't move left. There is a wall\n");
     }
-    // if its the end of the maze
-    if (maze->position.x == maze->end.x && maze->position.y == maze->end.y)
-    {
-        endGame();
-    }
-}
-
-// void printMap(Maze maze)
-// {
-//     // in this function, the program will printf the wgit adhole map
-//     // and replace the current position with X
-// }
-
-int endGame()
-{
-    printf("You won!\n");
-    exit(EXIT_SUCCESS);
-}
-
-// ----------------------------------------------
-
-
-/**
- * @brief Free the memory allocated to the maze struct
- *
- * @param this the pointer to the struct to free
- */
-void free_maze(Maze *this)
-{
-    for (int i = 0; i < this->height; i++)
-    {
-        free(this->map[i]);
-    }
-    free(this->map);
-}
-
-
-
-
-/**
- * @brief Prints the maze out - code provided to ensure correct formatting
- *
- * @param this pointer to maze to print
- * @param player the current player location
- */
-void print_maze(Maze *this)
-{
-    // make sure we have a leading newline..
-    printf("\n");
-    for (int i = 0; i < this->height; i++)
-    {
-        if (i == this->position.y)
-        {
-            for (int j = 0; j < this->width; j++)
-            {
-                if (this->position.x == j)
-                {
-                    printf("X");
-                }
-                else
-                {
-                    printf("%c", this->map[i][j]);
-                }
-            }
-            printf("\n");
-        }
-        else
-        {
-            printf("%s\n", this->map[i]);
-        }
-        // printf("%s\n", this->map[i]);
-        // for (int j = 0; j < this->width; j++)
-        // {
-        //     // decide whether player is on this spot or not
-        //     if (this->position.x == j && this->position.y == i)
-        //     {
-        //         printf("X");
-        //     }
-        //     else
-        //     {
-        //         printf("%c", this->map[i][j]);
-        //     }
-        // }
-        // end each row with a newline.
-    }
+    // check for end of game
+    isEndGame(maze);
 }
 
 /**
- * @brief Validates and performs a movement in a given direction
+ * @brief Clear the buffer
  *
- * @param this Maze struct
- * @param player The player's current position
- * @param direction The desired direction to move in
+ * @return void
  */
-void move(Maze *this, Coord *player, char direction)
-{
-    // Check the desired direction and perform the movement
-    switch (direction)
-    {
-    case 'w':
-    case 'W':
-        moveUp(this);
-        break;
-    case 's':
-    case 'S':
-        moveDown(this);
-        break;
-    case 'd':
-    case 'D':
-        moveRight(this);
-        break;
-    case 'a':
-    case 'A':
-        moveLeft(this);
-        break;
-    default:
-        printf("Invalid direction\n");
-        break;
-    }
-}
-
-/**
- * @brief Check whether the player has won and return a pseudo-boolean
- *
- * @param this current maze
- * @param player player position
- * @return int 0 for false, 1 for true
- */
-int has_won(Maze *this, Coord *player)
-{
-}
-
-
-
 void clearBuffer()
 {
     int c;
     while ((c = getchar()) != '\n' && c != EOF)
     {
     }
-}
-
-FILE *open_file(const char *filename, const char *mode)
-{
-    FILE *file = fopen(filename, mode);
-    if (file == NULL)
-    {
-        printf("Error: Bad filename\n");
-        exit(EXIT_FILE_ERROR);
-    }
-    return file;
 }

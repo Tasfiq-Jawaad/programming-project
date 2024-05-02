@@ -9,6 +9,7 @@
 
 void read_maze(Maze *this, Coord *player, FILE *file);
 void create_maze(Maze *maze);
+void display_menu();
 
 int main(int argc, char *argv[])
 {
@@ -22,77 +23,74 @@ int main(int argc, char *argv[])
     // open the maze file
     FILE *file = open_file(argv[1], "r");
 
-    // variable declation
+    // variable declaration
     Maze maze; // declare the maze variable
     Coord player; // variable to store player's position
 
     // Get the width and height of the maze
     maze.width = get_width(file);
-    validateDimention(maze.width);
+    validateDimension(maze.width);
     
-    maze->height = get_height(file);
-    validateDimention(maze->height);
+    maze.height = get_height(file);
+    validateDimension(maze.height);
 
     // Create the maze
-    create_maze(maze);
+    create_maze(&maze);
 
     // read the maze file and set the map
     read_maze(&maze, &player, file);
 
 
-    // Read the maze file and store the map
+    // initially show the map for the player
+    print_map(&maze);
 
-    print_maze(&maze);
+    // display the menu
+    display_menu();
 
-    char input[3];
+    // navigation input
+    char input[3]; // input buffer with one extra space to check for extra characters
     do
     {
-        printf("Enter a character: ");
+        printf("What will be your move?: ");
         fgets(input, sizeof(input), stdin);
-        // scanf("%s", input);
-        input[strcspn(input, "\n")] = '\0'; // Remove the newline character
+
+        input[strcspn(input, "\n")] = '\0'; // Remove the newline character to compare the input
         if (strlen(input) > 1)
         {
             printf("Error: Only one character allowed\n");
-            clearBuffer();
+            clearBuffer(); // clear the buffer
         }
         else
         {
             char character = input[0];
-            // Rest of your code using the character input
-            if (character == 'w' || character == 'W')
+            switch (character)
             {
+            case 'w':
+            case 'W':
                 moveUp(&maze);
-            }
-            else if (character == 's' || character == 'S')
-            {
+                break;
+            case 's':
+            case 'S':
                 moveDown(&maze);
-            }
-            else if (character == 'd' || character == 'D')
-            {
+                break;
+            case 'd':
+            case 'D':
                 moveRight(&maze);
-            }
-            else if (character == 'a' || character == 'A')
-            {
+                break;
+            case 'a':
+            case 'A':
                 moveLeft(&maze);
-            }
-            else if (character == 'm' || character == 'M')
-            {
-                print_maze(&maze);
-            }
-            else
-            {
+                break;
+            case 'm':
+            case 'M':
+                print_map(&maze);
+                break;
+            default:
                 printf("Error: invalid key\n");
+                break;
             }
-            // clearBuffer();
-            // Remove the else block for 'w' or 'W' characters
         }
-
-        // Add more conditions for other keys if needed
-        // print_maze(&maze);
-        // ...
     } while (1);
-    // moveUp(&maze);
 }
 
 
@@ -107,13 +105,12 @@ int main(int argc, char *argv[])
 void read_maze(Maze *maze, Coord *player, FILE *file)
 {
     // Read the maze file and store the map
-
     char ch;
     int startCount = 0;
     int endCount = 0;
     for (int i = 0; i < maze->height; i++)
     {
-        int chCount = 0;
+        int chCount = 0; // counter for the number of characters in the row
         // Read each line until it reaches a new line or end of file
         while ((ch = fgetc(file)) != '\n' && ch != EOF)
         {
@@ -145,7 +142,6 @@ void read_maze(Maze *maze, Coord *player, FILE *file)
             printf("Error: each row and column does not have the same size\n");
             exit(EXIT_MAZE_ERROR);
         }
-        // printf("%s\n", maze->map[i]); // Print the scanned line
     }
 
     if (startCount == 0)
@@ -153,17 +149,18 @@ void read_maze(Maze *maze, Coord *player, FILE *file)
         printf("Error: starting point missing\n");
         exit(EXIT_MAZE_ERROR);
     }
-    if (startCount > 1)
+    else if (startCount > 1)
     {
         printf("Error: multiple starting point found\n");
         exit(EXIT_MAZE_ERROR);
     }
+
     if (endCount == 0)
     {
         printf("Error: no ending point found\n");
         exit(EXIT_MAZE_ERROR);
     }
-    if (endCount > 1)
+    else if (endCount > 1)
     {
         printf("Error: multiple ending point found\n");
         exit(EXIT_MAZE_ERROR);
@@ -203,4 +200,20 @@ void create_maze(Maze *maze)
     maze->end.y = -1;
     maze->position.x = -1;
     maze->position.y = -1;
+}
+
+/**
+ * @brief display the menu for the maze game
+ *
+ * @return void
+ */
+void display_menu()
+{
+    printf("Welcome to this maze game!\n");
+    printf("Use the following keys to navigate the maze:\n");
+    printf("W or w to move up\n");
+    printf("S or s to move down\n");
+    printf("A or a to move left\n");
+    printf("D or d to move right\n");
+    printf("M or m to display the map. Your current position will be displayed as X. Good luck!!\n");
 }

@@ -6,10 +6,17 @@ Success : maze loaded successfully
 #   ####
 # # ####
 #X#E####
-Enter a character: Dialogue: you moved up
-Enter a character: Dialogue: you moved up
-Enter a character: Dialogue: you moved right
-Enter a character: Dialogue: you moved right
-Enter a character: Dialogue: you moved down
-Enter a character: Dialogue: you moved down
+Welcome to this maze game!
+Use the following keys to navigate the maze:
+W or w to move up
+S or s to move down
+A or a to move left
+D or d to move right
+M or m to display the map. Your current position will be displayed as X. Good luck!!
+What will be your move?: Dialogue: you moved up
+What will be your move?: Dialogue: you moved up
+What will be your move?: Dialogue: you moved right
+What will be your move?: Dialogue: you moved right
+What will be your move?: Dialogue: you moved down
+What will be your move?: Dialogue: you moved down
 You won!
